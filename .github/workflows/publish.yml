@@ -31,7 +31,7 @@ jobs:
       - run: yarn install --production=false
       - run: yarn build
       - run: yarn package
-      - run: npm publish dist
+      - run: npm publish dist --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
@@ -48,6 +48,6 @@ jobs:
       - run: yarn install --production=false
       - run: yarn build
       - run: yarn package
-      - run: npm publish dist
+      - run: npm publish dist --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.github_packages}}
