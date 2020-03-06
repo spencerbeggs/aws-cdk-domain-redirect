@@ -6,7 +6,7 @@
 
 It turns out that setting up proper domain fowrarding on AWS involves a mess of CloudFront distributions, Lambda@Edge functions and Route 53 Alias records. Who has time for all that?
 
-If you are using [AWS Cloud Development Kit](https://aws.amazon.com/cdk/) to manage your infrastructure, this construct will wire it all together for your in just a couple lines of code.
+If you are using [AWS Cloud Development Kit](https://aws.amazon.com/cdk/) to manage your infrastructure, this construct will wire it all together for your in just a couple lines of code. Note: Lambda@Edge functions must be created in the us-east-1 region, which means that [a stack using this constuct does too](https://github.com/spencerbeggs/aws-cdk-domain-redirect/issues/1).
 
 ## Basic Usage
 

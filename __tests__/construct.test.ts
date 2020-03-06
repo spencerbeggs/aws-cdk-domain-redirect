@@ -1,18 +1,17 @@
 import { App, Stack } from "@aws-cdk/core";
+import { DomainRedirect, REGION_ERROR_MESSAGE } from "../src/redirect";
 import { countResources, expect as expectCDK } from "@aws-cdk/assert";
 
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import { DomainRedirect } from "../src/redirect";
 
 class TestApp {
 	public readonly stack: Stack;
 	private readonly app: App;
 
-	constructor() {
+	constructor(region = "us-east-1") {
 		const account = "123456789012";
-		const region = "us-east";
 		const context = {
-			[`availability-zones:${account}:${region}`]: `${region}-1a`,
+			[`availability-zones:${account}:${region}`]: `${region}a`,
 		};
 		this.app = new App({ context });
 		this.stack = new Stack(this.app, "MyStack", { env: { account, region } });
@@ -167,5 +166,17 @@ describe("DomainRedirect", (): void => {
 		});
 		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
+	});
+	it("it throws if you try to create a stack that is not in us-east-1", () => {
+		const { stack: stackInWrongRegion } = new TestApp("us-west-1");
+		const fn = (): void => {
+			new DomainRedirect(stackInWrongRegion, "redirects", {
+				zoneName: "domain1.com",
+				cert: fakeCert,
+				target: "https://spencerbeg.gs",
+				preserve: false,
+			});
+		};
+		expect(fn).toThrow(new Error(REGION_ERROR_MESSAGE));
 	});
 });

@@ -12,7 +12,7 @@ import {
 } from "@aws-cdk/aws-cloudfront";
 import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
 import { CompositePrincipal, PolicyStatement, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
-import { Construct, RemovalPolicy } from "@aws-cdk/core";
+import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
 
 import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
@@ -84,12 +84,19 @@ export function hash(code: string): string {
 
 const isValidDomain = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/;
 
+export const REGION_ERROR_MESSAGE =
+	"Lambda@Edge functions must be created in the us-east-1 region. CloudFormation prevents this construct from working in your region. See: https://github.com/spencerbeggs/aws-cdk-domain-redirect/issues/1";
+
 export class DomainRedirect extends Construct {
 	public constructor(scope: Construct, id: string, props: DomainRedirectProps) {
 		super(scope, id);
 
 		if (!Array.isArray(props)) {
 			props = [props];
+		}
+
+		if (Stack.of(this).region !== "us-east-1") {
+			throw new Error(REGION_ERROR_MESSAGE);
 		}
 
 		// Retrieve an IHosted zone from DomainOptions.zone property
