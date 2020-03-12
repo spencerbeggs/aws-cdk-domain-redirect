@@ -8,5 +8,6 @@ cache:
 branches:
   only:
     - master
+    - release/*
 script:
   - yarn travis
