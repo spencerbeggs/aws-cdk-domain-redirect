@@ -29,7 +29,7 @@ describe("DomainRedirect", (): void => {
 				fromLookup: fromLookup,
 			},
 			AddressRecordTarget: {
-				fromAlias: function(): object {
+				fromAlias: function (): object {
 					return {
 						bind: fromAlias,
 					};
@@ -40,7 +40,7 @@ describe("DomainRedirect", (): void => {
 			domainName: "example.com",
 		});
 	});
-	it("looks up an IHostedZone if a valid hostname is passed as a string to DomainOptions.zoneName", function(): void {
+	it("looks up an IHostedZone if a valid hostname is passed as a string to DomainOptions.zoneName", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
@@ -52,7 +52,7 @@ describe("DomainRedirect", (): void => {
 		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
 	});
-	it("throws if an invalid hostname is passed as a string to DomainOptions.zoneName", function(): void {
+	it("throws if an invalid hostname is passed as a string to DomainOptions.zoneName", function (): void {
 		const fn = (): void => {
 			new DomainRedirect(stack, "redirects", {
 				zoneName: "garbage",
@@ -63,7 +63,7 @@ describe("DomainRedirect", (): void => {
 
 		expect(fn).toThrow(new Error("Invalid domain"));
 	});
-	it("looks up Domain.certificateArn if a Certificate is passed to DomainOptions.cert", function(): void {
+	it("looks up Domain.certificateArn if a Certificate is passed to DomainOptions.cert", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
@@ -75,7 +75,7 @@ describe("DomainRedirect", (): void => {
 		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
 	});
-	it("accepts a string for DomainOptions.hostnames", function(): void {
+	it("accepts a string for DomainOptions.hostnames", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
@@ -88,7 +88,7 @@ describe("DomainRedirect", (): void => {
 		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
 	});
-	it("passes through an array of strings for DomainOptions.hostnames", function(): void {
+	it("passes through an array of strings for DomainOptions.hostnames", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
@@ -101,7 +101,7 @@ describe("DomainRedirect", (): void => {
 		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
 	});
-	it("handles zoneName without a trialing period", function(): void {
+	it("handles zoneName without a trialing period", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com",
 		});
