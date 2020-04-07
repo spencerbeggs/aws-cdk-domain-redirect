@@ -151,7 +151,7 @@ export class DomainRedirect extends Construct {
 			};
 		};
 
-		const domains = props.map(prop => makeOptions(prop));
+		const domains = props.map((prop) => makeOptions(prop));
 
 		const bucket = new Bucket(this, "redirect-bucket", {
 			blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -171,7 +171,7 @@ export class DomainRedirect extends Construct {
 		policyStatement.addResources(`${bucket.bucketArn}/*`);
 		policyStatement.addCanonicalUserPrincipal(originAccessIdentity.cloudFrontOriginAccessIdentityS3CanonicalUserId);
 
-		domains.forEach(domain => {
+		domains.forEach((domain) => {
 			const { zone, acmCertificateArn, hostnames, target, preserve, name } = domain;
 			const code = makeRedirect(target, preserve.path, preserve.query);
 			const redirect = new Function(this, `${name}-redirect-lambda`, {
@@ -181,7 +181,7 @@ export class DomainRedirect extends Construct {
 				role: new Role(this, `${name}-redirect-lambda-role`, {
 					assumedBy: new CompositePrincipal(
 						new ServicePrincipal("lambda.amazonaws.com"),
-						new ServicePrincipal("edgelambda.amazonaws.com")
+						new ServicePrincipal("edgelambda.amazonaws.com"),
 					),
 					managedPolicies: [
 						{
@@ -230,7 +230,7 @@ export class DomainRedirect extends Construct {
 				],
 			});
 
-			hostnames.forEach(hostname => {
+			hostnames.forEach((hostname) => {
 				new ARecord(this, `${hostname.replace(".", "-")}-record`, {
 					target: AddressRecordTarget.fromAlias(new CloudFrontTarget(distro)),
 					zone,
