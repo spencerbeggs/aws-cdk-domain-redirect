@@ -35,7 +35,7 @@ describe("makeRedirect", () => {
 						},
 					],
 				},
-			})
+			}),
 		);
 	});
 	it("it redirects, preserving the pathname", () => {
@@ -53,7 +53,7 @@ describe("makeRedirect", () => {
 						},
 					],
 				},
-			})
+			}),
 		);
 	});
 	it("it redirects, preserving the query", () => {
@@ -71,7 +71,7 @@ describe("makeRedirect", () => {
 						},
 					],
 				},
-			})
+			}),
 		);
 	});
 	it("it redirects, preserving the pathname and query", () => {
@@ -89,7 +89,7 @@ describe("makeRedirect", () => {
 						},
 					],
 				},
-			})
+			}),
 		);
 	});
 });
