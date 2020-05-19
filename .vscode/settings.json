@@ -19,5 +19,6 @@
 	"prettier.configPath": ".prettierrc.js",
 	"markdownlint.config": {
 		"no-hard-tabs": false
-	}
+	},
+	"deno.enable": false
 }
