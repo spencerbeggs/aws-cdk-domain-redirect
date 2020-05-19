@@ -1,7 +1,7 @@
 {
 	"name": "@spencerbeggs/aws-cdk-domain-redirect",
 	"description": "An AWS CDK construct that makes redirecting HTTP(S) requests to a different domain a breeze.",
-	"version": "1.2.1",
+	"version": "1.3.0",
 	"license": "MIT",
 	"author": "C. Spencer Beggs <spencer@beg.gs>",
 	"scripts": {
