@@ -15,7 +15,7 @@ import { CompositePrincipal, PolicyStatement, Role, ServicePrincipal } from "@aw
 import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
 
 import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 
 type CertificateType = string | Certificate;
@@ -110,8 +110,16 @@ export class DomainRedirect extends Construct {
 		};
 
 		// Retrieve the certificate ARN from DomainOptions.cert property
-		const makeCert = (cert: CertificateType): string => {
-			return typeof cert === "string" ? cert : cert.certificateArn;
+		const makeCert = (zone: IHostedZone, cert: CertificateType): string => {
+			if (typeof cert != "string") return cert.certificateArn; // Certificate CDK Object
+			if (cert.indexOf("arn:aws:acm:") == 0) return cert; // Is Certificate ARN
+			// Is Certificate Domain
+			const certificate = new DnsValidatedCertificate(this, 'Certificate', {
+				domainName: cert,
+				hostedZone: zone,
+				region: "us-east-1"
+			});
+			return certificate.certificateArn;
 		};
 
 		// Set hostnames to the apex domain and www suddomain if DomainOptions.hostnames property is omitted
@@ -128,8 +136,8 @@ export class DomainRedirect extends Construct {
 
 		const makeOptions = (domain: DomainOptions): Domain => {
 			const zone = makeZone(domain.zoneName);
-			const acmCertificateArn = makeCert(domain.cert);
 			const hostnames = makeHostnames(zone, domain.hostnames);
+			const acmCertificateArn = makeCert(zone, domain.cert);
 			const name = hostnames[0].replace(".", "-");
 			let preserve = defaultPreserveOpts;
 			if (domain.preserve === false) {
