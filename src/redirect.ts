@@ -2,6 +2,7 @@ import * as crypto from "crypto";
 
 import { AddressRecordTarget, HostedZone, IHostedZone } from "@aws-cdk/aws-route53";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
+import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import {
 	CloudFrontAllowedMethods,
 	CloudFrontWebDistribution,
@@ -15,7 +16,6 @@ import { CompositePrincipal, PolicyStatement, Role, ServicePrincipal } from "@aw
 import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
 
 import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
-import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 
 type CertificateType = string | Certificate;
@@ -114,10 +114,10 @@ export class DomainRedirect extends Construct {
 			if (typeof cert != "string") return cert.certificateArn; // Certificate CDK Object
 			if (cert.indexOf("arn:aws:acm:") == 0) return cert; // Is Certificate ARN
 			// Is Certificate Domain
-			const certificate = new DnsValidatedCertificate(this, 'Certificate', {
+			const certificate = new DnsValidatedCertificate(this, "Certificate", {
 				domainName: cert,
 				hostedZone: zone,
-				region: "us-east-1"
+				region: "us-east-1",
 			});
 			return certificate.certificateArn;
 		};
