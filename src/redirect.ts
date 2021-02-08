@@ -1,3 +1,4 @@
+import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import * as crypto from "crypto";
 
 import { AddressRecordTarget, HostedZone, IHostedZone } from "@aws-cdk/aws-route53";
@@ -11,9 +12,14 @@ import {
 	OriginAccessIdentity,
 	PriceClass,
 } from "@aws-cdk/aws-cloudfront";
-import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
 import { CompositePrincipal, PolicyStatement, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
+import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
+import { HostedZone, IHostedZone, RecordTarget } from "@aws-cdk/aws-route53";
+import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
+import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
+import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
 import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
+import * as crypto from "crypto";
 
 import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
@@ -240,7 +246,7 @@ export class DomainRedirect extends Construct {
 
 			hostnames.forEach((hostname) => {
 				new ARecord(this, `${hostname.replace(".", "-")}-record`, {
-					target: AddressRecordTarget.fromAlias(new CloudFrontTarget(distro)),
+					target: RecordTarget.fromAlias(new CloudFrontTarget(distro)),
 					zone,
 					recordName: hostname,
 				});
