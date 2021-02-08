@@ -1,9 +1,4 @@
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import * as crypto from "crypto";
-
-import { AddressRecordTarget, HostedZone, IHostedZone } from "@aws-cdk/aws-route53";
-import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
-import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import {
 	CloudFrontAllowedMethods,
 	CloudFrontWebDistribution,
@@ -20,9 +15,6 @@ import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
 import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
 import * as crypto from "crypto";
-
-import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
-import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 
 type CertificateType = string | Certificate;
 type HostnamesType = string | string[];
