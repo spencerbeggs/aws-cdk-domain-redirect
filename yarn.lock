@@ -380,9 +380,9 @@
     constructs "^3.2.0"
 
 "@aws-cdk/cdk-assets-schema@^1.88.0":
-  version "1.88.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cdk-assets-schema/-/cdk-assets-schema-1.88.0.tgz#cbf3e4bca9a4c78da137be4efe213efc33b072ba"
-  integrity sha512-8l67nOg+zzFMi5yCHx2YK9LheAVJZVSKX5urVGaE0TOso8t/36ZcHZYWQtaMNFuzR8XkKLFnE3TjZ3STd2lxpw==
+  version "1.89.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cdk-assets-schema/-/cdk-assets-schema-1.89.0.tgz#254380981b6e587152a39e11ca667fc20c4b68df"
+  integrity sha512-r1iJgjZv6LiAeL7vCoTUUE2cCN33VxXy8RlFS07Hf44SMtveqOK7izJVRhuaSm6T6cLll9I3e8rs+r1ecgz5tw==
 
 "@aws-cdk/cfnspec@1.88.0":
   version "1.88.0"
