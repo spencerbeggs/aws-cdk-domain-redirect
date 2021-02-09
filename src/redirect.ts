@@ -1,7 +1,4 @@
-import * as crypto from "crypto";
-
-import { AddressRecordTarget, HostedZone, IHostedZone } from "@aws-cdk/aws-route53";
-import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
+import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import {
 	CloudFrontAllowedMethods,
 	CloudFrontWebDistribution,
@@ -10,13 +7,14 @@ import {
 	OriginAccessIdentity,
 	PriceClass,
 } from "@aws-cdk/aws-cloudfront";
-import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
 import { CompositePrincipal, PolicyStatement, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
-import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
-
-import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
+import { HostedZone, IHostedZone, RecordTarget } from "@aws-cdk/aws-route53";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
+import { ARecord } from "@aws-cdk/aws-route53/lib/record-set";
+import { BlockPublicAccess, Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
+import { Construct, RemovalPolicy, Stack } from "@aws-cdk/core";
+import * as crypto from "crypto";
 
 type CertificateType = string | Certificate;
 type HostnamesType = string | string[];
@@ -110,8 +108,16 @@ export class DomainRedirect extends Construct {
 		};
 
 		// Retrieve the certificate ARN from DomainOptions.cert property
-		const makeCert = (cert: CertificateType): string => {
-			return typeof cert === "string" ? cert : cert.certificateArn;
+		const makeCert = (zone: IHostedZone, cert: CertificateType): string => {
+			if (typeof cert !== "string") return cert.certificateArn; // Certificate CDK Object
+			if (cert.indexOf("arn:aws:acm:") === 0) return cert; // Is Certificate ARN
+			// Is Certificate Domain
+			const certificate = new DnsValidatedCertificate(this, "Certificate", {
+				domainName: cert,
+				hostedZone: zone,
+				region: "us-east-1",
+			});
+			return certificate.certificateArn;
 		};
 
 		// Set hostnames to the apex domain and www suddomain if DomainOptions.hostnames property is omitted
@@ -128,8 +134,8 @@ export class DomainRedirect extends Construct {
 
 		const makeOptions = (domain: DomainOptions): Domain => {
 			const zone = makeZone(domain.zoneName);
-			const acmCertificateArn = makeCert(domain.cert);
 			const hostnames = makeHostnames(zone, domain.hostnames);
+			const acmCertificateArn = makeCert(zone, domain.cert);
 			const name = hostnames[0].replace(".", "-");
 			let preserve = defaultPreserveOpts;
 			if (domain.preserve === false) {
@@ -232,7 +238,7 @@ export class DomainRedirect extends Construct {
 
 			hostnames.forEach((hostname) => {
 				new ARecord(this, `${hostname.replace(".", "-")}-record`, {
-					target: AddressRecordTarget.fromAlias(new CloudFrontTarget(distro)),
+					target: RecordTarget.fromAlias(new CloudFrontTarget(distro)),
 					zone,
 					recordName: hostname,
 				});

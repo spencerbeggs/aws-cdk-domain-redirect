@@ -3,8 +3,7 @@ module.exports = {
 	testEnvironment: "node",
 	globals: {
 		"ts-jest": {
-			packageJson: "package.json",
-			tsConfig: "tsconfig.json",
+			tsconfig: "tsconfig.json",
 		},
 	},
 	transform: {

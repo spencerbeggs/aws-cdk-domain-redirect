@@ -1,8 +1,8 @@
+import { countResources, expect as expectCDK } from "@aws-cdk/assert";
+import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
+import { PublicHostedZone } from "@aws-cdk/aws-route53";
 import { App, Stack } from "@aws-cdk/core";
 import { DomainRedirect, REGION_ERROR_MESSAGE } from "../src/redirect";
-import { countResources, expect as expectCDK } from "@aws-cdk/assert";
-
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
 
 class TestApp {
 	public readonly stack: Stack;
@@ -19,7 +19,7 @@ class TestApp {
 }
 
 describe("DomainRedirect", (): void => {
-	let stack: Stack, fromLookup: jest.Mock, fromAlias: jest.Mock, fakeCert: Certificate;
+	let stack: Stack, fromLookup: jest.Mock, fromAlias: jest.Mock;
 	beforeEach(() => {
 		({ stack } = new TestApp());
 		fromLookup = jest.fn();
@@ -29,16 +29,13 @@ describe("DomainRedirect", (): void => {
 				fromLookup: fromLookup,
 			},
 			AddressRecordTarget: {
-				fromAlias: function (): object {
+				fromAlias: function (): Record<string, unknown> {
 					return {
 						bind: fromAlias,
 					};
 				},
 			},
 		}));
-		fakeCert = new Certificate(stack, "Certificate", {
-			domainName: "example.com",
-		});
 	});
 	it("looks up an IHostedZone if a valid hostname is passed as a string to DomainOptions.zoneName", function (): void {
 		fromLookup.mockReturnValue({
@@ -67,6 +64,9 @@ describe("DomainRedirect", (): void => {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "example.com",
 			cert: fakeCert,
@@ -79,9 +79,29 @@ describe("DomainRedirect", (): void => {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
 		});
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "example.com",
 			cert: fakeCert,
+			target: "https://spencerbeg.gs",
+			hostnames: "foobar.example.com",
+		});
+		expectCDK(stack).to(countResources("AWS::CertificateManager::Certificate", 1));
+		expectCDK(stack).to(countResources("AWS::S3::Bucket", 1));
+		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
+	});
+	it("accepts a DnsValidatedCertificate as a cert type", function (): void {
+		const exampleDotComZone = new PublicHostedZone(stack, "ExampleDotCom", {
+			zoneName: "example.com",
+		});
+		new DomainRedirect(stack, "redirects", {
+			zoneName: "example.com",
+			cert: new DnsValidatedCertificate(stack, "DnsValidatedCertificate", {
+				domainName: "test.example.com",
+				hostedZone: exampleDotComZone,
+			}),
 			target: "https://spencerbeg.gs",
 			hostnames: "foobar.example.com",
 		});
@@ -91,6 +111,9 @@ describe("DomainRedirect", (): void => {
 	it("passes through an array of strings for DomainOptions.hostnames", function (): void {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com.",
+		});
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
 		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "example.com",
@@ -105,6 +128,9 @@ describe("DomainRedirect", (): void => {
 		fromLookup.mockReturnValue({
 			zoneName: "example.com",
 		});
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "example.com",
 			cert: fakeCert,
@@ -114,6 +140,9 @@ describe("DomainRedirect", (): void => {
 		expectCDK(stack).to(countResources("AWS::CloudFront::Distribution", 1));
 	});
 	it("accepts and array of DomainOptions", () => {
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		fromLookup
 			.mockReturnValueOnce({
 				zoneName: "domain1.com",
@@ -140,7 +169,9 @@ describe("DomainRedirect", (): void => {
 		fromLookup.mockReturnValueOnce({
 			zoneName: "example.com",
 		});
-
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "domain1.com",
 			cert: fakeCert,
@@ -157,7 +188,9 @@ describe("DomainRedirect", (): void => {
 		fromLookup.mockReturnValueOnce({
 			zoneName: "example.com",
 		});
-
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		new DomainRedirect(stack, "redirects", {
 			zoneName: "domain1.com",
 			cert: fakeCert,
@@ -169,6 +202,9 @@ describe("DomainRedirect", (): void => {
 	});
 	it("it throws if you try to create a stack that is not in us-east-1", () => {
 		const { stack: stackInWrongRegion } = new TestApp("us-west-1");
+		const fakeCert = new Certificate(stack, "Certificate", {
+			domainName: "example.com",
+		});
 		const fn = (): void => {
 			new DomainRedirect(stackInWrongRegion, "redirects", {
 				zoneName: "domain1.com",
