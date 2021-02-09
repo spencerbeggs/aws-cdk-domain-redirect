@@ -200,6 +200,7 @@ export class DomainRedirect extends Construct {
 			const version = redirect.addVersion(codeSha256);
 
 			const distro = new CloudFrontWebDistribution(this, `${name}-distro`, {
+				defaultRootObject: "",
 				viewerCertificate: {
 					aliases: hostnames,
 					props: {
