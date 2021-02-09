@@ -1,4 +1,4 @@
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { Certificate, DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import {
 	CloudFrontAllowedMethods,
 	CloudFrontWebDistribution,
@@ -109,8 +109,8 @@ export class DomainRedirect extends Construct {
 
 		// Retrieve the certificate ARN from DomainOptions.cert property
 		const makeCert = (zone: IHostedZone, cert: CertificateType): string => {
-			if (typeof cert != "string") return cert.certificateArn; // Certificate CDK Object
-			if (cert.indexOf("arn:aws:acm:") == 0) return cert; // Is Certificate ARN
+			if (typeof cert !== "string") return cert.certificateArn; // Certificate CDK Object
+			if (cert.indexOf("arn:aws:acm:") === 0) return cert; // Is Certificate ARN
 			// Is Certificate Domain
 			const certificate = new DnsValidatedCertificate(this, "Certificate", {
 				domainName: cert,
