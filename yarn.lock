@@ -1655,9 +1655,9 @@ concat-map@0.0.1:
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
 constructs@^3.2.0, constructs@^3.3.14:
-  version "3.3.14"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.14.tgz#47361907e4d3641e9bcfdb2545a0e60511d64352"
-  integrity sha512-CJLDceGK03UpR0GQTIeD5nPQchzuyrqpPXz2i8ywTgqKWAZa7+kwD5qaUi3oxlJDSbhcbu+fkmLzXQJEC9kIoA==
+  version "3.4.133"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.4.133.tgz#63719936f0d1c7e80a9268bde26080e3b4a5917f"
+  integrity sha512-Dw4aB4Og0sPf3CQ2WLDGOMaV7+ROqZ6bBG6q0EK9+bjk15mMj3k+NVZxxRD4iQ9/Pl+yEqgSe7VUDqwZJNf70w==
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
